@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 
 	"go.uber.org/zap"
 
@@ -51,6 +52,7 @@ func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 
 func (jwtService *JwtService) GetRedisJWT(userName string) (redisJWT string, err error) {
 	redisJWT, err = global.GVA_REDIS.Get(context.Background(), userName).Result()
+	fmt.Print("redis jwt get success redisJWT: ", redisJWT)
 	return redisJWT, err
 }
 
@@ -68,6 +70,7 @@ func (jwtService *JwtService) SetRedisJWT(jwt string, userName string) (err erro
 	}
 	timer := dr
 	err = global.GVA_REDIS.Set(context.Background(), userName, jwt, timer).Err()
+	fmt.Print("redis jwt set success jwt: ", jwt)
 	return err
 }
 

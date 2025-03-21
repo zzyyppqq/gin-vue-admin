@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/initialize/internal"
@@ -54,6 +55,8 @@ func (m *mongo) Initialization() error {
 		SocketTimeoutMS:  &global.GVA_CONFIG.Mongo.SocketTimeoutMs,
 		ConnectTimeoutMS: &global.GVA_CONFIG.Mongo.ConnectTimeoutMs,
 	}
+	jsonData, _ := json.Marshal(*config)
+	fmt.Println("mongoDB config: ", string(jsonData))
 	if global.GVA_CONFIG.Mongo.Username != "" && global.GVA_CONFIG.Mongo.Password != "" {
 		config.Auth = &qmgo.Credential{
 			Username:   global.GVA_CONFIG.Mongo.Username,
@@ -61,12 +64,14 @@ func (m *mongo) Initialization() error {
 			AuthSource: global.GVA_CONFIG.Mongo.AuthSource,
 		}
 	}
+	// open只会连接，在插入时才会创建
 	client, err := qmgo.Open(ctx, config, opts...)
 
 	if err != nil {
 		return errors.Wrap(err, "链接mongodb数据库失败!")
 	}
 	global.GVA_MONGO = client
+	// 插入索引
 	err = m.Indexes(ctx)
 	if err != nil {
 		return err
@@ -75,6 +80,7 @@ func (m *mongo) Initialization() error {
 }
 
 func (m *mongo) CreateIndexes(ctx context.Context, name string, indexes [][]string) error {
+	fmt.Println("create indexes name: ", name, ", indexes: ", indexes)
 	collection, err := global.GVA_MONGO.Database.Collection(name).CloneCollection()
 	if err != nil {
 		return errors.Wrapf(err, "获取[%s]的表对象失败!", name)

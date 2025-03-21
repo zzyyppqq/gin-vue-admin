@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 	"os"
 	"strings"
@@ -28,5 +29,6 @@ func OtherInit() {
 		scanner := bufio.NewScanner(file)
 		scanner.Scan()
 		global.GVA_CONFIG.AutoCode.Module = strings.TrimPrefix(scanner.Text(), "module ")
+		fmt.Println("autoCode module file: ", global.GVA_CONFIG.AutoCode.Module)
 	}
 }

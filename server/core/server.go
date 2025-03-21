@@ -20,6 +20,7 @@ func RunWindowsServer() {
 	}
 
 	if global.GVA_CONFIG.System.UseMongo {
+		// 初始化mongodb
 		err := initialize.Mongo.Initialization()
 		if err != nil {
 			zap.L().Error(fmt.Sprintf("%+v", err))

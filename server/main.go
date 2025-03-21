@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/flipped-aurora/gin-vue-admin/server/core"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
+	"time"
 )
 
 //go:generate go env -w GO111MODULE=on
@@ -28,7 +30,12 @@ import (
 // @name                        x-token
 // @BasePath                    /
 func main() {
+	// 记录开始时间
+	start := time.Now()
 	global.GVA_VP = core.Viper() // 初始化Viper
+	//configJson, _ := json.MarshalIndent(global.GVA_CONFIG, "", "  ")
+	//fmt.Println("global.GVA_CONFIG: ", string(configJson))
+
 	initialize.OtherInit()
 	global.GVA_LOG = core.Zap() // 初始化zap日志库
 	zap.ReplaceGlobals(global.GVA_LOG)
@@ -36,10 +43,24 @@ func main() {
 	initialize.Timer()
 	initialize.DBList()
 	if global.GVA_DB != nil {
-		initialize.RegisterTables() // 初始化表
+		// 迁移表耗时很长，大概1分钟，若不改变表结构，则无须执行
+		//initialize.RegisterTables() // 初始化表
 		// 程序结束前关闭数据库链接
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
 	}
+	// 计算构建时间
+	fmt.Printf("初始化时间: %s\n", time.Since(start))
 	core.RunWindowsServer()
+
+}
+
+func testMongodb() {
+	global.GVA_VP = core.Viper() // 初始化Viper
+
+	// 初始化mongodb
+	err := initialize.Mongo.Initialization()
+	if err != nil {
+		zap.L().Error(fmt.Sprintf("%+v", err))
+	}
 }
