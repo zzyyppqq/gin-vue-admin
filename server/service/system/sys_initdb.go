@@ -88,6 +88,7 @@ type InitDBService struct{}
 
 // InitDB 创建数据库并初始化 总入口
 func (initDBService *InitDBService) InitDB(conf request.InitDB) (err error) {
+	fmt.Println("initDBService dbName: ", conf.DBName)
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, "adminPassword", conf.AdminPassword)
 	if len(initializers) == 0 {

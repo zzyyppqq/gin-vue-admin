@@ -32,6 +32,7 @@ import (
 func main() {
 	// 记录开始时间
 	start := time.Now()
+	// yaml配置文件读取
 	global.GVA_VP = core.Viper() // 初始化Viper
 	//configJson, _ := json.MarshalIndent(global.GVA_CONFIG, "", "  ")
 	//fmt.Println("global.GVA_CONFIG: ", string(configJson))

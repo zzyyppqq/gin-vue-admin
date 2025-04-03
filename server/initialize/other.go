@@ -25,6 +25,7 @@ func OtherInit() {
 		local_cache.SetDefaultExpire(dr),
 	)
 	file, err := os.Open("go.mod")
+	// 代码自动生成
 	if err == nil && global.GVA_CONFIG.AutoCode.Module == "" {
 		scanner := bufio.NewScanner(file)
 		scanner.Scan()
